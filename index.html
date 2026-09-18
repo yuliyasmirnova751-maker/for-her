@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Для тебя</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #16110d;
+    --bg-2: #1f1812;
+    --cream: #f2e8d8;
+    --cream-soft: #d4c5b0;
+    --muted: #8a7a65;
+    --gold: #c9a86a;
+    --line: rgba(201, 168, 106, 0.18);
+  }
+  html, body { min-height: 100vh; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg) 70%);
+    color: var(--cream);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 24px 100px;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .container {
+    max-width: 460px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1.2s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Онбординг */
+  .onboarding {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #1f1812, #0f0b08 80%);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+    text-align: center;
+    transition: opacity 0.9s ease, visibility 0.9s ease;
+  }
+  .onboarding.hidden { opacity: 0; visibility: hidden; }
+  .onboarding-inner { max-width: 360px; }
+  .onboarding-mark {
+    color: var(--gold);
+    font-size: 18px;
+    margin-bottom: 24px;
+    opacity: 0.7;
+    animation: pulseMark 4s ease-in-out infinite;
+  }
+  @keyframes pulseMark {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+  .onboarding-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream);
+    letter-spacing: 0.01em;
+    margin-bottom: 22px;
+  }
+  .onboarding-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--cream-soft);
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+  .onboarding-btn {
+    background: none;
+    border: 1px solid rgba(201, 168, 106, 0.5);
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-weight: 300;
+  }
+  .onboarding-btn:hover {
+    border-color: var(--gold);
+    background: rgba(201, 168, 106, 0.08);
+    color: var(--gold);
+  }
+
+  /* Кнопка звука */
+  .sound-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(22, 17, 13, 0.6);
+    backdrop-filter: blur(10px);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 50;
+    transition: all 0.4s ease;
+    font-size: 14px;
+  }
+  .sound-toggle:hover {
+    border-color: rgba(201, 168, 106, 0.5);
+    color: var(--cream-soft);
+  }
+  .sound-toggle.on {
+    color: var(--gold);
+    border-color: rgba(201, 168, 106, 0.5);
+  }
+  .sound-toggle .wave {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(201, 168, 106, 0.4);
+    opacity: 0;
+  }
+  .sound-toggle.on .wave { animation: soundWave 2.4s ease-out infinite; }
+  @keyframes soundWave {
+    0% { transform: scale(0.85); opacity: 0.6; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 48px; }
+  .greeting {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+  .greeting em { font-style: italic; color: var(--gold); }
+  .date-line {
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 32px 0 40px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 44px;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 300;
+  }
+  .hero-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 88px;
+    font-weight: 300;
+    line-height: 0.95;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .hero-suffix {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--cream-soft);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+  .hero-live {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 22px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+  .hero-live .tick { color: var(--cream-soft); }
+
+  /* Записка дня */
+  .note-section { margin-bottom: 44px; }
+  .note-label {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 300;
+  }
+  .note-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 40px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    user-select: none;
+  }
+  .note-card:hover {
+    border-color: rgba(201, 168, 106, 0.4);
+    background: linear-gradient(180deg, rgba(201,168,106,0.05), rgba(255,255,255,0.01));
+  }
+  .note-card::before {
+    content: '';
+    position: absolute;
+    top: 12px; left: 50%; transform: translateX(-50%);
+    width: 30px; height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+  .note-hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--cream-soft);
+    transition: opacity 0.4s ease;
+    font-weight: 300;
+  }
+  .note-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--cream);
+    font-weight: 400;
+    display: none;
+  }
+  .note-card.opened .note-hint { display: none; }
+  .note-card.opened .note-text { display: block; animation: fadeUp 0.7s ease both; }
+
+  /* Фото дня */
+  .photo-section { margin-bottom: 44px; }
+  .photo-frame {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px 14px 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    transition: border-color 0.5s ease;
+  }
+  .photo-frame:hover { border-color: rgba(201, 168, 106, 0.35); }
+  .photo-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #0f0b08;
+  }
+  .photo-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 1s ease;
+    filter: saturate(0.92) contrast(0.98);
+  }
+  .photo-img-wrap img.loaded { opacity: 1; }
+  .photo-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+    font-weight: 300;
+  }
+  .photo-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--cream-soft);
+    text-align: center;
+    margin-top: 16px;
+    font-weight: 300;
+    line-height: 1.4;
+    min-height: 22px;
+  }
+
+  /* До встречи */
+  .meet-section {
+    margin-bottom: 44px;
+    text-align: center;
+    padding: 32px 0 36px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .meet-section .hero-number { font-size: 72px; }
+  .meet-section.hidden { display: none; }
+
+  /* Статистика */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 44px;
+  }
+  .stat {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    color: var(--cream);
+    line-height: 1;
+    font-weight: 400;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  /* Баннер ДР */
+  .bd-banner {
+    display: none;
+    text-align: center;
+    padding: 26px 24px;
+    margin-bottom: 36px;
+    border: 1px solid rgba(201, 168, 106, 0.5);
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(201,168,106,0.08), transparent);
+  }
+  .bd-banner.show { display: block; animation: fadeUp 1s ease both; }
+  .bd-banner-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+  .bd-banner-sub {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cream-soft);
+    margin-top: 10px;
+    font-weight: 300;
+  }
+
+  /* Подвал */
+  .footer {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .footer::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+    margin: 0 auto 20px;
+  }
+
+  /* Пылинки */
+  .particle {
+    position: fixed;
+    width: 2px; height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    animation: drift linear infinite;
+  }
+  @keyframes drift {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Онбординг -->
+  <div class="onboarding" id="onboarding">
+    <div class="onboarding-inner">
+      <div class="onboarding-mark">✦</div>
+      <div class="onboarding-title">Для тебя</div>
+      <div class="onboarding-text">
+        Каждый день здесь будет новая записка, новое воспоминание.<br>
+        Сохрани эту страничку на главный экран и открывай утром.<br>
+        Это на каждый день. И насовсем.
+      </div>
+      <button class="onboarding-btn" id="onboardingBtn">Открыть</button>
+    </div>
+  </div>
+
+  <!-- Кнопка звука -->
+  <div class="sound-toggle" id="soundToggle" title="Тихий фон">
+    <span class="wave"></span>♪
+  </div>
+
+  <!-- Основной контент -->
+  <div class="container">
+    <div class="header">
+      <div class="greeting" id="greeting">…</div>
+      <div class="date-line" id="dateLine">—</div>
+    </div>
+
+    <div class="bd-banner" id="bdBanner">
+      <div class="bd-banner-title">С днём рождения, родная</div>
+      <div class="bd-banner-sub">сегодня твой день</div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-label">Мы вместе</div>
+      <div class="hero-number" id="daysTogether">0</div>
+      <div class="hero-suffix" id="daysSuffix">дней</div>
+      <div class="hero-live" id="heroLive">…</div>
+    </div>
+
+    <div class="note-section">
+      <div class="note-label">Записка на сегодня</div>
+      <div class="note-card" id="noteCard">
+        <div class="note-hint">Коснись, чтобы открыть</div>
+        <div class="note-text" id="noteText"></div>
+      </div>
+    </div>
+
+    <div class="photo-section">
+      <div class="note-label">Воспоминание дня</div>
+      <div class="photo-frame">
+        <div class="photo-img-wrap">
+          <img id="photoImg" alt="">
+          <div class="photo-placeholder" id="photoPlaceholder">…</div>
+        </div>
+        <div class="photo-caption" id="photoCaption"></div>
+      </div>
+    </div>
+
+    <div class="meet-section" id="meetSection">
+      <div class="hero-label">До нашей встречи</div>
+      <div class="hero-number" id="daysToMeet">0</div>
+      <div class="hero-suffix" id="meetSuffix">дней</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="weeksVal">0</div>
+        <div class="stat-label">недель</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="monthsVal">0</div>
+        <div class="stat-label">месяцев</div>
+      </div>
+    </div>
+
+    <div class="footer" id="footer">каждый день — твой</div>
+  </div>
+
+<script>
+  // ═══════════════════════════════════════════
+  //  НАСТРОЙКИ
+  // ═══════════════════════════════════════════
+  const CONFIG = {
+    name: 'Зайка',
+    startDate: '2024-08-05',
+    birthday: { month: 9, day: 20 },
+    nextMeet: 'null',            // null — чтобы скрыть секцию
+    footerLine: 'каждый новый день с тобой это чудо',
+    notesUrl: 'notes.json'
+  };
+
+  // ═══ ФОТО ═══
+  const PHOTOS = [
+    { src: '', caption: 'наша первая совместная фотография' },
+    { src: '', caption: 'тот день в парке' },
+    { src: '', caption: 'твоя любимая фотография' },
+    { src: '', caption: 'наше лето' },
+    { src: '', caption: 'случайный кадр, который я храню' },
+    { src: '', caption: 'ты смеёшься — обожаю этот кадр' },
+    { src: '', caption: 'помнишь этот вечер?' },
+    { src: '', caption: '' },
+    { src: '', caption: 'то утро, когда мы никуда не спешили' },
+    { src: '', caption: '' }
+  ];
+
+  let NOTES = ['…'];
+
+  // ═══ Утилиты ═══
+  const $ = id => document.getElementById(id);
+
+  function plural(n, forms) {
+    const n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return forms[0];
+    if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return forms[1];
+    return forms[2];
+  }
+
+  function dayDiff(a, b) {
+    const MS = 86400000;
+    const d1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const d2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    return Math.floor((d2 - d1) / MS);
+  }
+
+  // ═══ Загрузка записок ═══
+  async function loadNotes() {
+    try {
+      const res = await fetch(CONFIG.notesUrl + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (Array.isArray(data.notes) && data.notes.length > 0) {
+        NOTES = data.notes;
+      }
+    } catch (e) {
+      console.warn('Не удалось загрузить notes.json:', e);
+      NOTES = ['Ты — самое лучшее, что со мной случилось.'];
+    }
+    renderNote();
+  }
+
+  function renderNote() {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - startOfYear) / 86400000);
+    const text = NOTES[dayOfYear % NOTES.length] || '…';
+    $('noteText').textContent = '«' + text + '»';
+  }
+
+  // ═══ Основное обновление ═══
+  function update() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    let greet;
+    if (hour < 5) greet = 'Доброй ночи';
+    else if (hour < 12) greet = 'Доброе утро';
+    else if (hour < 18) greet = 'Добрый день';
+    else greet = 'Добрый вечер';
+    $('greeting').innerHTML = greet + ', <em>' + CONFIG.name + '</em>.';
+
+    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    const weekdays = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+    $('dateLine').textContent = now.getDate() + ' ' + months[now.getMonth()] + ' · ' + weekdays[now.getDay()];
+
+    const [y, m, d] = CONFIG.startDate.split('-').map(Number);
+    const start = new Date(y, m - 1, d);
+    const days = dayDiff(start, now) + 1;
+    $('daysTogether').textContent = days;
+    $('daysSuffix').textContent = plural(days, ['день','дня','дней']);
+
+    $('weeksVal').textContent = Math.floor(days / 7);
+    const monthsCount = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+    $('monthsVal').textContent = Math.max(monthsCount, 0);
+
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - startOfYear) / 86400000);
+
+    renderNote();
+    setPhoto(PHOTOS[(dayOfYear * 3 + 1) % PHOTOS.length]);
+
+    const isBd = (now.getMonth() === CONFIG.birthday.month - 1) && (now.getDate() === CONFIG.birthday.day);
+    $('bdBanner').classList.toggle('show', isBd);
+
+    const meetSection = $('meetSection');
+    if (CONFIG.nextMeet) {
+      const [my, mm, md] = CONFIG.nextMeet.split('-').map(Number);
+      const meetDate = new Date(my, mm - 1, md);
+      const diff = dayDiff(now, meetDate);
+      if (diff >= 0) {
+        meetSection.classList.remove('hidden');
+        $('daysToMeet').textContent = diff === 0 ? 'сегодня' : diff;
+        $('daysToMeet').style.fontSize = diff === 0 ? '52px' : '';
+        $('meetSuffix').textContent = diff === 0 ? '' : plural(diff, ['день','дня','дней']);
+      } else {
+        meetSection.classList.add('hidden');
+      }
+    } else {
+      meetSection.classList.add('hidden');
+    }
+
+    $('footer').textContent = CONFIG.footerLine;
+  }
+
+  // ═══ Живой счётчик (часы · минуты · секунды) ═══
+  function updateLive() {
+    const now = new Date();
+    const [y, m, d] = CONFIG.startDate.split('-').map(Number);
+    const start = new Date(y, m - 1, d, 0, 0, 0);
+
+    const totalSec   = Math.max(0, Math.floor((now - start) / 1000));
+    const totalMin   = Math.floor(totalSec / 60);
+    const totalHours = Math.floor(totalMin / 60);
+
+    const fmt = n => n.toLocaleString('ru-RU').replace(/\u00A0/g, ' ');
+
+    $('heroLive').innerHTML =
+      fmt(totalHours) + ' ' + plural(totalHours, ['час','часа','часов']) +
+      ' · <span class="tick">' + fmt(totalMin) + ' ' + plural(totalMin, ['минута','минуты','минут']) + '</span>' +
+      ' · <span class="tick">' + fmt(totalSec) + ' ' + plural(totalSec, ['секунда','секунды','секунд']) + '</span>';
+  }
+
+  // ═══ Фото ═══
+  function setPhoto(photo) {
+    const img = $('photoImg');
+    const ph = $('photoPlaceholder');
+    $('photoCaption').textContent = photo.caption || '';
+
+    if (photo.src) {
+      ph.style.display = 'none';
+      img.style.display = 'block';
+      img.onload = () => img.classList.add('loaded');
+      img.onerror = () => {
+        img.style.display = 'none';
+        ph.style.display = 'flex';
+        ph.textContent = photo.caption || 'фото';
+      };
+      img.src = photo.src;
+    } else {
+      img.style.display = 'none';
+      img.classList.remove('loaded');
+      ph.style.display = 'flex';
+      ph.textContent = 'здесь будет наша фотография';
+    }
+  }
+
+  // ═══ Записка — открыть ═══
+  $('noteCard').addEventListener('click', function () {
+    this.classList.toggle('opened');
+  });
+
+  // ═══ Пылинки ═══
+  function spawnParticle() {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (15 + Math.random() * 10) + 's';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 26000);
+  }
+  for (let i = 0; i < 6; i++) setTimeout(spawnParticle, i * 3000);
+  setInterval(spawnParticle, 3500);
+
+  // ═══ Музыка ═══
+  let audioCtx = null;
+  let masterGain = null;
+  let chordTimer = null;
+  let currentChord = 0;
+
+  const CHORDS = [
+    [220.00, 261.63, 329.63],
+    [174.61, 220.00, 261.63],
+    [261.63, 329.63, 392.00],
+    [196.00, 246.94, 293.66]
+  ];
+
+  function playChord(index) {
+    const chord = CHORDS[index % CHORDS.length];
+    const now = audioCtx.currentTime;
+    const dur = 14;
+    const overlap = 4;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 900;
+    filter.Q.value = 0.3;
+    filter.connect(masterGain);
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(1, now + 4);
+    g.gain.setValueAtTime(1, now + dur - 4);
+    g.gain.linearRampToValueAtTime(0, now + dur);
+    g.connect(filter);
+
+    chord.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.detune.value = (i - 1) * 4;
+      const oscGain = audioCtx.createGain();
+      oscGain.gain.value = 0.33;
+      osc.connect(oscGain);
+      oscGain.connect(g);
+      osc.start(now);
+      osc.stop(now + dur + 0.5);
+    });
+
+    chordTimer = setTimeout(() => playChord(index + 1), (dur - overlap) * 1000);
+  }
+
+  function startAmbient() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0;
+    masterGain.connect(audioCtx.destination);
+    masterGain.gain.linearRampToValueAtTime(0.09, audioCtx.currentTime + 5);
+    playChord(currentChord);
+  }
+
+  function stopAmbient() {
+    if (!audioCtx) return;
+    audioCtx.suspend();
+    clearTimeout(chordTimer);
+  }
+
+  function resumeAmbient() {
+    if (!audioCtx) { startAmbient(); return; }
+    audioCtx.resume();
+    playChord(currentChord);
+  }
+
+  const soundToggle = $('soundToggle');
+  soundToggle.addEventListener('click', () => {
+    if (!audioCtx) {
+      startAmbient();
+      soundToggle.classList.add('on');
+    } else if (audioCtx.state === 'running') {
+      stopAmbient();
+      soundToggle.classList.remove('on');
+    } else {
+      resumeAmbient();
+      soundToggle.classList.add('on');
+    }
+  });
+
+  // ═══ Онбординг ═══
+  const onboarding = $('onboarding');
+  const SEEN_KEY = 'for_her_seen_v1';
+
+  let alreadySeen = false;
+  try { alreadySeen = localStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
+  if (alreadySeen) onboarding.classList.add('hidden');
+
+  $('onboardingBtn').addEventListener('click', () => {
+    onboarding.classList.add('hidden');
+    try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    startAmbient();
+    soundToggle.classList.add('on');
+  });
+
+  // ═══ Старт ═══
+  update();
+  updateLive();
+  loadNotes();
+  setInterval(update, 60000);
+  setInterval(updateLive, 1000);
+  setInterval(loadNotes, 60 * 60 * 1000);
+</script>
+</body>
+</html>
